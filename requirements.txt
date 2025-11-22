@@ -6,3 +6,4 @@ pandas
 scikit-learn
 shap
 psycopg2
+tldextract
