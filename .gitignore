@@ -1,0 +1,19 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment
+.env
+*.env
+
+# SQLite database
+predictions.db
+
+# Model checkpoints (optional)
+*.ckpt
+
+# Logs
+*.log
+
+# System files
+.DS_Store
