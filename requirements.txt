@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+lightgbm
+numpy
+pandas
+scikit-learn
+shap
+python-multipart
+sqlite3-binary
