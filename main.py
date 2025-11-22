@@ -13,6 +13,8 @@ from shap_explainer import get_shap_explanations
 from db import init_db, save_prediction
 import shap
 
+from fastapi.middleware.cors import CORSMiddleware
+
 # Initialize DB
 init_db()
 
@@ -53,6 +55,13 @@ app = FastAPI()
 class URLRequest(BaseModel):
     url: str
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/predict")
 def predict_url(data: URLRequest):
