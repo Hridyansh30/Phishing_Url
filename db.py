@@ -1,33 +1,36 @@
-# db.py
-import sqlite3
 import os
-from datetime import datetime
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
-DB_PATH = "predictions.db"
-print("DB absolute path:", os.path.abspath(DB_PATH))
+DB_URL = os.getenv("DATABASE_URL")
+
+def get_connection():
+    conn = psycopg2.connect(DB_URL, sslmode="require")
+    return conn
 
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute("""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS predictions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             url TEXT,
             prediction INTEGER,
-            probability REAL,
-            timestamp TEXT
-        )
+            probability DOUBLE PRECISION,
+            created_at TIMESTAMP DEFAULT NOW()
+        );
     """)
     conn.commit()
+    cur.close()
     conn.close()
 
 def save_prediction(url, prediction, probability):
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO predictions (url, prediction, probability, timestamp)
-        VALUES (?, ?, ?, ?)
-    """, (url, prediction, probability, datetime.now().isoformat()))
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT INTO predictions (url, prediction, probability)
+        VALUES (%s, %s, %s);
+    """, (url, prediction, probability))
     conn.commit()
-    print("Saved prediction for URL:", url)
+    cur.close()
     conn.close()
